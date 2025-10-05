@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartinha Romântica 💌</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --bg: #fde2e2;
+            --front: #e89ca3;
+            --back: #c97b83;
+            --top: #d27c8e;
+            --sticker-bg: #fff0f5;
+            --sticker-border: #f2c1c8;
+            --note-bg: #fff5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+            padding: 20px;
+            transition: background-color 0.5s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .heart {
+            position: absolute;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: red;
+            clip-path: polygon(50% 0%, 61% 12%, 75% 12%, 85% 25%, 85% 40%, 50% 100%, 15% 40%, 15% 25%, 25% 12%, 39% 12%);
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .envelop {
+            position: relative;
+            width: 100%;
+            max-width: 22rem;
+            height: 15rem;
+            z-index: 10;
+        }
+
+        .envelop__front-paper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            left: 0;
+            border-radius: 0.7rem;
+            border: 0.35rem solid var(--back);
+            background-color: var(--front);
+            clip-path: polygon(100% 0%, 50% 70%, 0% 0%, 0% 100%, 100% 100%);
+            z-index: 300;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .envelop__back-paper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            left: 0;
+            border-radius: 0.7rem;
+            background-color: var(--back);
+            clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 0% 90%);
+            z-index: 100;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .envelop__up-paper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            left: 0;
+            border-radius: 0.7rem;
+            background-color: var(--top);
+            z-index: 400;
+            clip-path: polygon(0% 0%, 100% 0%, 50% 81%);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .envelop__sticker {
+            position: absolute;
+            top: 35%;
+            left: 0;
+            right: 0;
+            margin: auto;
+            width: 100%;
+            height: 20%;
+            background-color: var(--sticker-bg);
+            border: 0.3rem solid var(--sticker-border);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='red' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: 2rem;
+            background-position: center;
+            z-index: 400;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .envelop__content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            left: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .love-notes {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .note {
+            position: absolute;
+            width: 95%;
+            height: 30%;
+            background-color: var(--note-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: height 0.5s, transform 0.3s, box-shadow 0.3s, background 0.3s;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .note:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+            background: #ffe0e6;
+        }
+
+        .note:nth-child(1) {
+            bottom: 60%;
+        }
+
+        .note:nth-child(2) {
+            bottom: 40%;
+        }
+
+        .note:nth-child(3) {
+            bottom: 20%;
+        }
+
+        .note__text {
+            padding: 1rem;
+            text-align: center;
+            font-size: 1rem;
+            color: #333;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .signature {
+            position: absolute;
+            bottom: 5%;
+            width: 100%;
+            text-align: center;
+            font-size: 1.3rem;
+            color: #c94b6e;
+            font-family: 'Dancing Script', cursive;
+            opacity: 0;
+        }
+
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 500;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .audio-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #c94b6e;
+            transition: transform 0.3s;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-btn:active {
+            transform: scale(0.9);
+        }
+
+        .instructions {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #c94b6e;
+            font-size: 0.9rem;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 600;
+        }
+
+        @media (max-width: 768px) {
+            .envelop {
+                height: 14rem;
+            }
+
+            .note__text {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+            }
+
+            .audio-btn {
+                font-size: 24px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .instructions {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .envelop {
+                height: 12rem;
+            }
+
+            .note__text {
+                font-size: 0.85rem;
+                padding: 0.6rem;
+            }
+
+            .signature {
+                font-size: 1.1rem;
+            }
+
+            .audio-controls {
+                bottom: 15px;
+                right: 15px;
+                padding: 10px;
+            }
+
+            .audio-btn {
+                font-size: 22px;
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Remove hover effects on touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            .note:hover {
+                transform: none;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                background: var(--note-bg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="instructions">
+        Toque no selo para abrir a carta 💌
+    </div>
+
+    <div class="container">
+        <div class="envelop">
+            <div class="envelop__front-paper"></div>
+            <div class="envelop__back-paper"></div>
+            <div class="envelop__up-paper js-up-paper"></div>
+            <div class="envelop__sticker js-sticker"></div>
+            <div class="envelop__content js-envelop-content">
+                <div class="love-notes">
+                    <div class="note js-note">
+                        <div class="note__text" data-text="Oii minha princesa ❤️ Aqui estamos completando mais um mês juntos, é sempre uma alegria acordar e saber que tenho você ao meu lado."></div>
+                    </div>
+                    <div class="note js-note">
+                        <div class="note__text" data-text="Quero que esses momentos nunca acabem e que venham muitos outros pela frente."></div>
+                    </div>
+                    <div class="note js-note">
+                        <div class="note__text" data-text="Você é a melhor coisa que me aconteceu. Obrigado por me escolher todos os dias.\nTe amo muito! 💖"></div>
+                    </div>
+                </div>
+                <div class="signature">Com muito amor, Hugo para Lívia ❤️</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="audio-controls">
+        <button class="audio-btn" id="play-btn">▶️</button>
+        <button class="audio-btn" id="pause-btn" style="display: none;">⏸️</button>
+    </div>
+
+    <!-- Áudio de fundo -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-snowman-529.mp3" type="audio/mp3">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- Som para as notas -->
+    <audio id="note-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-page-turn-single-1105.mp3" type="audio/mp3">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <script>
+        // Elementos DOM
+        const notes = document.querySelectorAll(".js-note");
+        const sticker = document.querySelector(".js-sticker");
+        const upPaper = document.querySelector(".js-up-paper");
+        const signature = document.querySelector(".signature");
+        const bgMusic = document.getElementById("bg-music");
+        const noteSound = document.getElementById("note-sound");
+        const playBtn = document.getElementById("play-btn");
+        const pauseBtn = document.getElementById("pause-btn");
+        const body = document.body;
+        const instructions = document.querySelector('.instructions');
+
+        // Configurações para mobile
+        bgMusic.volume = 0.3;
+        noteSound.volume = 0.5;
+
+        // Entrada envelope
+        gsap.from(".envelop", { y: -100, opacity: 0, duration: 1, ease: "back.out(1.7)" });
+
+        // Função de digitação
+        function typeText(element, text) {
+            element.textContent = "";
+            let i = 0;
+            let interval = setInterval(() => {
+                element.textContent += text[i];
+                i++;
+                if (i >= text.length) clearInterval(interval);
+            }, 35);
+        }
+
+        // Reset notas
+        function resetNotes() {
+            notes.forEach(note => {
+                note.classList.remove("active");
+                gsap.to(note, { height: "30%", duration: 0.3 });
+                note.querySelector(".note__text").textContent = "";
+            });
+        }
+
+        // Ao tocar nas notas
+        notes.forEach((note, i) => {
+            note.addEventListener("click", () => {
+                noteSound.currentTime = 0;
+                noteSound.play().catch(e => console.log("Som da nota não pode ser reproduzido:", e));
+
+                // Corações flutuantes
+                for (let j = 0; j < 5; j++) {
+                    const h = document.createElement("div");
+                    h.className = "heart";
+                    h.style.left = (note.offsetLeft + Math.random() * note.offsetWidth) + "px";
+                    h.style.top = (note.offsetTop + Math.random() * note.offsetHeight) + "px";
+                    body.appendChild(h);
+                    gsap.to(h, {
+                        y: h.offsetTop - 100,
+                        opacity: 0,
+                        scale: 1.5,
+                        duration: 1,
+                        onComplete: () => h.remove()
+                    });
+                }
+
+                if (note.classList.contains("active")) {
+                    note.classList.remove("active");
+                    gsap.to(note, { height: "30%", duration: 0.3 });
+                    note.querySelector(".note__text").textContent = "";
+                } else {
+                    resetNotes();
+                    note.classList.add("active");
+                    gsap.to(note, {
+                        height: 90 + (i * 15) + "%",
+                        duration: 0.4,
+                        onComplete: () => {
+                            typeText(note.querySelector(".note__text"), note.querySelector(".note__text").dataset.text);
+                            // Se última nota, mostra assinatura animada
+                            if (i === notes.length - 1) {
+                                gsap.to(signature, { opacity: 1, duration: 2 });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // Abrir envelope
+        function openEnvelope() {
+            gsap.to(upPaper, { bottom: "97%", rotation: 180, duration: 0.5, zIndex: 200 });
+            gsap.to(body, { backgroundColor: "#f8d0d8", duration: 0.5 });
+            gsap.to(instructions, { opacity: 0, duration: 0.5, onComplete: () => instructions.style.display = 'none' });
+        }
+
+        // Sticker
+        sticker.addEventListener("click", () => {
+            gsap.to(sticker, { width: "20%", left: "-80%", duration: 0.5 });
+            upPaper.addEventListener("click", openEnvelope);
+            
+            // Tenta tocar a música de fundo
+            bgMusic.play().then(() => {
+                playBtn.style.display = "none";
+                pauseBtn.style.display = "flex";
+            }).catch(e => {
+                console.log("Autoplay bloqueado, aguardando interação do usuário");
+            });
+        });
+
+        // Controles de áudio
+        playBtn.addEventListener("click", () => {
+            bgMusic.play().then(() => {
+                playBtn.style.display = "none";
+                pauseBtn.style.display = "flex";
+            }).catch(e => {
+                console.log("Erro ao reproduzir áudio:", e);
+            });
+        });
+
+        pauseBtn.addEventListener("click", () => {
+            bgMusic.pause();
+            pauseBtn.style.display = "none";
+            playBtn.style.display = "flex";
+        });
+
+        // Prevenir zoom em double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Melhorar performance em mobile
+        document.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        console.log("Site carregado e otimizado para mobile!");
+    </script>
+</body>
+</html>
